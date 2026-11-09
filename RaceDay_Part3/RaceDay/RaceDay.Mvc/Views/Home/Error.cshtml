@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+<div class="text-center py-5">
+    <div class="mb-4" style="font-size:4rem;color:#ef4444;">
+        <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h2 class="fw-bold mb-3">Something went wrong</h2>
+    <p class="text-muted mb-2">The application could not complete your request.</p>
+    <p class="text-muted small mb-4">
+        Most common cause: the <strong>API is not running</strong> or is on a different port.<br />
+        Make sure <code>RaceDay.Api</code> is running and that <code>ApiBaseUrl</code> in the MVC appsettings matches its port (currently set to <code>https://localhost:7203/</code>).
+    </p>
+    <div class="d-flex justify-content-center gap-2">
+        <a href="/" class="btn btn-raceday">Go Home</a>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">Login</a>
+    </div>
+</div>

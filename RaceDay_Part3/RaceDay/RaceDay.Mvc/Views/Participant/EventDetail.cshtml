@@ -1,0 +1,60 @@
+@model EventDto
+@{
+    ViewData["Title"] = Model.Name;
+    var categories = ViewBag.Categories as List<CategoryDto> ?? new List<CategoryDto>();
+}
+<div class="row">
+    <div class="col-md-8">
+        @{
+            var fallback = Model.EventType?.ToLower() switch
+            {
+                "run" => "/images/run.jpg",
+                "cycle" => "/images/cycle.jpg",
+                "walk" => "/images/walk.jpg",
+                _ => "/images/run.jpg"
+            };
+            var imgSrc = !string.IsNullOrEmpty(Model.BannerUrl) ? Model.BannerUrl : fallback;
+        }
+        <img src="@imgSrc" class="img-fluid rounded mb-3" alt="@Model.Name" style="max-height:320px;width:100%;object-fit:cover;" />
+        <div class="page-header mb-2">
+            <h2>@Model.Name</h2>
+            <span class="badge-type">@Model.EventType</span>
+        </div>
+        <p>@Model.Description</p>
+        <ul class="list-unstyled">
+            <li><i class="bi bi-calendar-event"></i> <strong>Date:</strong> @Model.EventDate.ToString("dddd, dd MMMM yyyy")</li>
+            <li><i class="bi bi-geo-alt"></i> <strong>Location:</strong> @Model.Location</li>
+            <li><i class="bi bi-signpost"></i> <strong>Distance:</strong> @Model.DistanceKm km</li>
+            <li><i class="bi bi-tag"></i> <strong>Type:</strong> @Model.EventType</li>
+            <li><i class="bi bi-person"></i> <strong>Organiser:</strong> @Model.OrganiserName</li>
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <div class="card-raceday">
+            <div class="card-body p-4">
+                <h5 class="section-title">Enrol for this Event</h5>
+                @if (!categories.Any())
+                {
+                    <p class="text-muted-rd mb-0">No categories available yet.</p>
+                }
+                else
+                {
+                    <form asp-action="Enrol" method="post" class="form-raceday">
+                        <input type="hidden" name="eventId" value="@Model.EventId" />
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label class="form-label">Select Category</label>
+                            <select name="categoryId" class="form-select" required>
+                                @foreach (var c in categories)
+                                {
+                                    <option value="@c.CategoryId">@c.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-raceday w-100">Enter Event</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

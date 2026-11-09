@@ -1,0 +1,69 @@
+@model UpdateEventRequest
+@{
+    ViewData["Title"] = "Edit Event";
+}
+<div class="page-header">
+    <h2><i class="bi bi-pencil-square me-2 text-danger"></i>Edit Event</h2>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-raceday">
+            <div class="card-body p-4">
+                <form asp-action="EditEvent" asp-route-id="@ViewBag.EventId" method="post" enctype="multipart/form-data" class="form-raceday" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name">Event Name *</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EventDate">Event Date *</label>
+                            <input asp-for="EventDate" class="form-control" type="date" />
+                            <span asp-validation-for="EventDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Location">Location *</label>
+                            <input asp-for="Location" class="form-control" />
+                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DistanceKm">Distance (km) *</label>
+                            <input asp-for="DistanceKm" class="form-control" type="number" step="0.1" min="0.1" />
+                            <span asp-validation-for="DistanceKm" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EventType">Event Type *</label>
+                            <select asp-for="EventType" class="form-select">
+                                <option value="">-- Select --</option>
+                                <option value="Run">Run</option>
+                                <option value="Walk">Walk</option>
+                                <option value="Cycle">Cycle</option>
+                            </select>
+                            <span asp-validation-for="EventType" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label>Update Banner Image</label>
+                        <input type="file" name="banner" class="form-control" accept="image/*" />
+                        <div class="form-text">Optional. JPG, PNG or WebP. Max 5 MB.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-raceday"><i class="bi bi-check-lg me-1"></i> Save Changes</button>
+                        <a asp-action="Events" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

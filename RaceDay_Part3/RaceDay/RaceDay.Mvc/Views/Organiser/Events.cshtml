@@ -1,0 +1,62 @@
+@model List<EventDto>
+@{
+    ViewData["Title"] = "My Events";
+}
+<div class="page-header">
+    <h2><i class="bi bi-calendar-event me-2 text-danger"></i>My Events</h2>
+    <a asp-action="CreateEvent" class="btn btn-raceday"><i class="bi bi-plus-lg me-1"></i> Create Event</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <h4>No events yet</h4>
+        <p class="text-muted-rd">Create your first event to start managing races.</p>
+        <a asp-action="CreateEvent" class="btn btn-raceday mt-2">Create Event</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+    @foreach (var e in Model.OrderByDescending(x => x.EventDate))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card-raceday h-100">
+                @{
+                    var fallback = e.EventType?.ToLower() switch
+                    {
+                        "run" => "/images/run.jpg",
+                        "cycle" => "/images/cycle.jpg",
+                        "walk" => "/images/walk.jpg",
+                        _ => "/images/run.jpg"
+                    };
+                    var imgSrc = !string.IsNullOrEmpty(e.BannerUrl) ? e.BannerUrl : fallback;
+                }
+                <img src="@imgSrc" class="card-img-top" alt="@e.Name" />
+                <div class="card-body">
+                    <h5 class="fw-bold">@e.Name</h5>
+                    <p class="text-muted-rd small mb-2">@(e.Description?.Length > 90 ? e.Description.Substring(0, 90) + "..." : e.Description)</p>
+                    <p class="mb-1 small"><i class="bi bi-calendar3 me-1"></i> @e.EventDate.ToString("dd MMM yyyy")</p>
+                    <p class="mb-1 small"><i class="bi bi-geo-alt me-1"></i> @e.Location</p>
+                    <div class="mt-2">
+                        <span class="badge-type">@e.EventType</span>
+                        <span class="badge bg-secondary">@e.DistanceKm km</span>
+                        <span class="badge-status badge-pending ms-1"><i class="bi bi-people me-1"></i>@e.EnrolmentCount enrolled</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pt-0 d-flex gap-1 flex-wrap">
+                    <a asp-action="EditEvent" asp-route-id="@e.EventId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a asp-action="Categories" asp-route-eventId="@e.EventId" class="btn btn-sm btn-outline-primary">Categories</a>
+                    <a asp-action="Enrolments" asp-route-eventId="@e.EventId" class="btn btn-sm btn-outline-success">Enrolments</a>
+                    <a asp-action="Results" asp-route-eventId="@e.EventId" class="btn btn-sm btn-outline-warning">Results</a>
+                    <form asp-action="DeleteEvent" asp-route-id="@e.EventId" method="post" class="d-inline" onsubmit="return confirm('Delete this event permanently?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}

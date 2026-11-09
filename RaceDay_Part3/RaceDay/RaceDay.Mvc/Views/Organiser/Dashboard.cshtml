@@ -1,0 +1,110 @@
+@model List<EventDto>
+@{
+    ViewData["Title"] = "Organiser Dashboard";
+    var upcoming = Model.Count(e => e.EventDate >= DateTime.Today);
+    var past = Model.Count(e => e.EventDate < DateTime.Today);
+    var totalEnrolments = Model.Sum(e => e.EnrolmentCount);
+}
+<div class="page-header">
+    <h2><i class="bi bi-speedometer2 me-2 text-danger"></i>Dashboard</h2>
+    <a asp-action="CreateEvent" class="btn btn-raceday"><i class="bi bi-plus-lg me-1"></i> Create Event</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card-stat" style="background: linear-gradient(135deg, #0f172a, #1e293b);">
+            <h5>Total Events</h5>
+            <h2>@Model.Count</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat" style="background: linear-gradient(135deg, #059669, #10b981);">
+            <h5>Upcoming</h5>
+            <h2>@upcoming</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+            <h5>Past Events</h5>
+            <h2>@past</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
+            <h5>Total Enrolments</h5>
+            <h2>@totalEnrolments</h2>
+        </div>
+    </div>
+</div>
+
+<h4 class="section-title">Your Events</h4>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <h4>No events yet</h4>
+        <p class="text-muted-rd">Create your first race event to get started.</p>
+        <a asp-action="CreateEvent" class="btn btn-raceday mt-2">Create Event</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive table-raceday">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Distance</th>
+                    <th>Enrolments</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model.OrderByDescending(x => x.EventDate))
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            @{
+                                var fb = e.EventType?.ToLower() switch
+                                {
+                                    "run" => "/images/run.jpg",
+                                    "cycle" => "/images/cycle.jpg",
+                                    "walk" => "/images/walk.jpg",
+                                    _ => "/images/run.jpg"
+                                };
+                                var src = !string.IsNullOrEmpty(e.BannerUrl) ? e.BannerUrl : fb;
+                            }
+                            <img src="@src" alt="" width="44" height="44" style="object-fit:cover;border-radius:8px;" />
+                            <strong>@e.Name</strong>
+                        </div>
+                    </td>
+                    <td>
+                        @e.EventDate.ToString("dd MMM yyyy")
+                        <span class="badge-status @(e.EventDate >= DateTime.Today ? "badge-confirmed" : "badge-cancelled") ms-1">@(e.EventDate >= DateTime.Today ? "Upcoming" : "Past")</span>
+                    </td>
+                    <td>@e.Location</td>
+                    <td><span class="badge-type">@e.EventType</span></td>
+                    <td>@e.DistanceKm km</td>
+                    <td>
+                        <a asp-action="Enrolments" asp-route-eventId="@e.EventId" class="text-decoration-none">
+                            <span class="badge-status badge-pending"><i class="bi bi-people me-1"></i>@e.EnrolmentCount</span>
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <a asp-action="Categories" asp-route-eventId="@e.EventId" class="btn btn-outline-primary" title="Categories">Categories</a>
+                            <a asp-action="Enrolments" asp-route-eventId="@e.EventId" class="btn btn-outline-success" title="Enrolments">Enrolments</a>
+                            <a asp-action="Results" asp-route-eventId="@e.EventId" class="btn btn-outline-warning" title="Results">Results</a>
+                            <a asp-action="EditEvent" asp-route-id="@e.EventId" class="btn btn-outline-secondary" title="Edit">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

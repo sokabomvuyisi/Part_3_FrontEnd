@@ -1,0 +1,52 @@
+@model RaceDay.Contracts.RegisterRequest
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card-raceday">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 fw-bold"><i class="bi bi-person-plus me-2 text-danger"></i>Create Account</h3>
+                <form asp-action="Register" method="post" class="form-raceday" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" type="email" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Role">I want to be a...</label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="">-- Select Role --</option>
+                            <option value="Organiser">Organiser</option>
+                            <option value="Participant">Participant</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-raceday w-100">Register</button>
+                </form>
+                <p class="text-center mt-3 mb-0">
+                    Already have an account? <a asp-action="Login">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

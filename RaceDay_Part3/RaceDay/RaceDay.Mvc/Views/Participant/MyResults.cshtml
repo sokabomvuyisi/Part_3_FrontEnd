@@ -1,0 +1,48 @@
+@model List<ResultDto>
+@{
+    ViewData["Title"] = "My Results";
+}
+<div class="page-header">
+    <h2><i class="bi bi-trophy me-2 text-danger"></i>My Race Results</h2>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-trophy"></i>
+        <h4>No results yet</h4>
+        <p class="text-muted-rd">Results appear here after the organiser publishes finish times and positions.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive table-raceday">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Finish Time</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td><strong>@r.EventName</strong></td>
+                    <td>@(r.EventDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                    <td>@(string.IsNullOrWhiteSpace(r.CategoryName) ? "—" : r.CategoryName)</td>
+                    <td><code>@r.FinishTime.ToString(@"hh\:mm\:ss")</code></td>
+                    <td>
+                        <span class="badge bg-danger fs-6">
+                            @r.Position.ToOrdinal()@(r.TotalFinishers > 0 ? " of " + Math.Max(r.TotalFinishers, r.Position) : "")
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

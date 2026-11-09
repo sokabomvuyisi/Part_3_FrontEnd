@@ -1,0 +1,68 @@
+@model List<EventDto>
+@{
+    ViewData["Title"] = "Upcoming Events";
+}
+<div class="page-header">
+    <h2><i class="bi bi-calendar2-event me-2 text-danger"></i>Upcoming Events</h2>
+</div>
+
+<form method="get" class="row g-2 mb-4 p-3 bg-white rounded-3 shadow-sm">
+    <div class="col-md-3">
+        <select name="type" class="form-select">
+            <option value="">All Types</option>
+            <option value="Run" selected="@(ViewBag.Type as string == "Run")">Run</option>
+            <option value="Walk" selected="@(ViewBag.Type as string == "Walk")">Walk</option>
+            <option value="Cycle" selected="@(ViewBag.Type as string == "Cycle")">Cycle</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input name="location" value="@ViewBag.Location" class="form-control" placeholder="Filter by location..." />
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-raceday">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <h4>No upcoming events</h4>
+        <p class="text-muted-rd">Check back later or adjust your filters.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+    @foreach (var e in Model)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card-raceday h-100">
+                @{
+                    var fallback = e.EventType?.ToLower() switch
+                    {
+                        "run" => "/images/run.jpg",
+                        "cycle" => "/images/cycle.jpg",
+                        "walk" => "/images/walk.jpg",
+                        _ => "/images/run.jpg"
+                    };
+                    var imgSrc = !string.IsNullOrEmpty(e.BannerUrl) ? e.BannerUrl : fallback;
+                }
+                <img src="@imgSrc" class="card-img-top" alt="@e.Name" />
+                <div class="card-body">
+                    <h5 class="fw-bold">@e.Name</h5>
+                    <p class="text-muted-rd small">@(e.Description?.Length > 80 ? e.Description.Substring(0, 80) + "..." : e.Description)</p>
+                    <p class="mb-1 small"><i class="bi bi-calendar3 me-1"></i> @e.EventDate.ToString("ddd, dd MMM yyyy")</p>
+                    <p class="mb-2 small"><i class="bi bi-geo-alt me-1"></i> @e.Location</p>
+                    <span class="badge-type">@e.EventType</span>
+                    <span class="badge bg-secondary">@e.DistanceKm km</span>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a asp-action="EventDetail" asp-route-id="@e.EventId" class="btn btn-raceday w-100">View & Enrol</a>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}

@@ -1,0 +1,64 @@
+@model ProfilePageViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+<div class="page-header">
+    <h2><i class="bi bi-person me-2 text-danger"></i>My Profile</h2>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card-raceday">
+            <div class="card-body p-4 text-center">
+                @if (!string.IsNullOrEmpty(Model.Profile.ProfileImageUrl))
+                {
+                    <img src="@Model.Profile.ProfileImageUrl" class="profile-avatar mb-3" alt="Profile picture" />
+                }
+                else
+                {
+                    <div class="profile-avatar-placeholder mb-3">
+                        <i class="bi bi-person display-4 text-muted"></i>
+                    </div>
+                }
+                <form asp-action="UploadPicture" method="post" enctype="multipart/form-data" class="form-raceday">
+                    @Html.AntiForgeryToken()
+                    <input type="file" name="picture" class="form-control form-control-sm mb-2" accept="image/*" required />
+                    <button type="submit" class="btn btn-sm btn-raceday">Upload Picture</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card-raceday">
+            <div class="card-body p-4">
+                <form asp-action="UpdateProfile" method="post" class="form-raceday" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Form.FirstName"></label>
+                            <input asp-for="Form.FirstName" class="form-control" />
+                            <span asp-validation-for="Form.FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Form.LastName"></label>
+                            <input asp-for="Form.LastName" class="form-control" />
+                            <span asp-validation-for="Form.LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.Email"></label>
+                        <input asp-for="Form.Email" class="form-control" type="email" />
+                        <span asp-validation-for="Form.Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label>Role</label>
+                        <input value="@Model.Profile.Role" class="form-control" disabled />
+                    </div>
+                    <button type="submit" class="btn btn-raceday"><i class="bi bi-check-lg me-1"></i> Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
